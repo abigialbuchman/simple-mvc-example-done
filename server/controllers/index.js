@@ -27,7 +27,8 @@ const hostIndex = (req, res) => {
   // actually calls index.jade. A second parameter of JSON can be passed
   // into the jade to be used as variables with #{varName}
   res.render('index', {
-    currentName: lastAdded.name,
+    currentCatName: lastAddedCat.name,
+    currentDogName: lastAddedDog.name,
     title: 'Home',
     pageName: 'Home Page',
   });
@@ -48,7 +49,7 @@ const readAllCats = (req, res, callback) => {
   Cat.find(callback).lean();
 };
 
-//function to find all dogs on request
+// function to find all dogs on request
 const readAllDogs = (req, res, callback) => {
   // Call the model's built in find function and provide it a
   // callback to run when the query is complete
@@ -126,6 +127,24 @@ const hostPage1 = (req, res) => {
   };
 
   readAllCats(req, res, callback);
+};
+
+// function to handle requests to the page1 page
+// controller functions in Express receive the full HTTP request
+// and a pre-filled out response object to send
+const hostPage4 = (req, res) => {
+  // function to call when we get objects back from the database.
+  // With Mongoose's find functions, you will get an err and doc(s) back
+  const callback = (err, docs) => {
+    if (err) {
+      return res.status(500).json({ err }); // if error, return it
+    }
+
+    // return success
+    return res.render('page1', { cats: docs });
+  };
+
+  readAllDogs(req, res, callback);
 };
 
 // function to handle requests to the page2 page
@@ -254,7 +273,7 @@ const setDogName = (req, res) => {
     // This way we can update it dynamically
     lastAddedDog = newDog;
     // return success
-    res.json({ name: lastAddedDog.name, breed: lastAddedDog.breed, age : lastAddedDog.age });
+    res.json({ name: lastAddedDog.name, breed: lastAddedDog.breed, age: lastAddedDog.age });
   });
 
   // if error, return it
@@ -262,7 +281,6 @@ const setDogName = (req, res) => {
 
   return res;
 };
-
 
 // function to handle requests search for a name and return the object
 // controller functions in Express receive the full HTTP request
@@ -338,10 +356,9 @@ const searchDogName = (req, res) => {
     }
 
     // if a match, send the match back
-    return res.json({ name: doc.name, breed: doc.breed, age : doc.age });
+    return res.json({ name: doc.name, breed: doc.breed, age: doc.age });
   });
 };
-
 
 // function to handle a request to update the last added object
 // this PURELY exists to show you how to update a model object
@@ -389,7 +406,7 @@ const updateLastDog = (req, res) => {
   const savePromise = lastAddedDog.save();
 
   // send back the name as a success for now
-  savePromise.then(() => res.json({ name: lastAddedDog.name, breed: lastAddedDog.breed, age : lastAddedDog.age }));
+  savePromise.then(() => res.json({ name: lastAddedDog.name, breed: lastAddedDog.breed, age: lastAddedDog.age }));
 
   // if save error, just return an error for now
   savePromise.catch((err) => res.status(500).json({ err }));
@@ -416,6 +433,7 @@ module.exports = {
   page1: hostPage1,
   page2: hostPage2,
   page3: hostPage3,
+  page4: hostPage4,
   readCat,
   readDog,
   getName,

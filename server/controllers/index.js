@@ -1,5 +1,5 @@
 // pull in our models. This will automatically load the index.js from that folder
-const { model } = require('mongoose');
+// const { model } = require('mongoose');
 const models = require('../models');
 
 // get the Cat model
@@ -141,7 +141,7 @@ const hostPage4 = (req, res) => {
     }
 
     // return success
-    return res.render('page1', { cats: docs });
+    return res.render('page4', { dogs: docs });
   };
 
   readAllDogs(req, res, callback);
@@ -406,7 +406,9 @@ const updateLastDog = (req, res) => {
   const savePromise = lastAddedDog.save();
 
   // send back the name as a success for now
-  savePromise.then(() => res.json({ name: lastAddedDog.name, breed: lastAddedDog.breed, age: lastAddedDog.age }));
+  savePromise.then(() => res.json(
+    { name: lastAddedDog.name, breed: lastAddedDog.breed, age: lastAddedDog.age },
+  ));
 
   // if save error, just return an error for now
   savePromise.catch((err) => res.status(500).json({ err }));
